@@ -12,9 +12,10 @@
 		var maxRadius = 30;
 		var minRadius = 10;
 		var gravity = 0.3;
-		var resistance = 0.3;
+		var resistance = 0.2;
+		var bounce = 0.9;
 		var ppcm = 36
-		var physTime = 1;
+		var physTime = 4;
 		var ppss = gravity * ppcm * 100;
 
 		var Ball = function(point, vector, radius) {
@@ -51,21 +52,21 @@
 
 			if (pre.x < this.radius) {
 				this.point.x = 2 * this.radius - pre.x;
-				this.vector.x *= -1;
+				this.vector.x *= -1*bounce;
 			}
 			else if (pre.x > size.width - this.radius) {
 				this.point.x = 2 * (size.width - this.radius) - pre.x;
-				this.vector.x *= -1;
+				this.vector.x *= -1*bounce;
 			}
 			else this.point.x = pre.x;
 
 			if (pre.y < this.radius) {
 				this.point.y = 2 * this.radius - pre.y;
-				this.vector.y *= -1;
+				this.vector.y *= -1*bounce;
 			}
 			else if (pre.y > size.height - this.radius) {
 				this.point.y = 2 * (size.height - this.radius) - pre.y;
-				this.vector.y *= -1;
+				this.vector.y *= -1*bounce;
 			}
 			else this.point.y = pre.y;
 		}
