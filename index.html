@@ -8,16 +8,20 @@
 	<script type="text/paperscript" canvas="myCanvas">
 
 		var balls = [];
-		var maxSpeed = 10;
+		var maxSpeed = 1500;
 		var maxRadius = 30;
 		var minRadius = 10;
-		var gravity = 5;
-		var resistance = 0.4;
+		var gravity = 0.3;
+		var resistance = 0.3;
+		var ppcm = 36
+		var physTime = 1;
+		var ppss = gravity * ppcm * 100;
 
 		var Ball = function(point, vector, radius) {
 			this.point = point;
 			this.vector = vector;
 			this.radius = radius;
+			this.prevTime = new Date();
 			var color = {
 				hue: Math.random() * 360,
 				saturation: 1,
@@ -36,12 +40,14 @@
 
 		Ball.prototype.iterate = function() {
 			var size = view.size;
+			var currTime = new Date(); 
+			var delta = (currTime - this.prevTime)/1000;
 
-			this.vector.x *= (100-resistance)/100;
-			this.vector.y *= (100-resistance)/100;
-			this.vector.y += gravity/50;
-
-			var pre = this.point + this.vector;
+			this.vector.x -= this.vector.x*delta*resistance;
+			this.vector.y -= this.vector.y*delta*resistance;
+			this.vector.y += delta*ppss;
+			var pre = this.point + this.vector*delta;
+			this.prevTime = currTime;
 
 			if (pre.x < this.radius) {
 				this.point.x = 2 * this.radius - pre.x;
@@ -62,9 +68,12 @@
 				this.vector.y *= -1;
 			}
 			else this.point.y = pre.y;
+		}
 
+		Ball.prototype.iterateFrame = function() {
 			this.item.position = this.point;
 		}
+
 
 		for(var i=0; i<5; i++){
 			var x = 100*i+200;
@@ -79,9 +88,15 @@
 
 		function onFrame() {
 			for (var i = 0; i<balls.length; i++) {
-				balls[i].iterate();
+				balls[i].iterateFrame();
 			}
 		}
+
+		setInterval(function(){
+			for (var i = 0; i<balls.length; i++) {
+				balls[i].iterate();
+			}
+		}, physTime);
 
 	</script>
 </head>
